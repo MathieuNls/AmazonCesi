@@ -32,6 +32,12 @@ public class APIKey {
 	public void setCalls(Map<String, Integer> calls) {
 		this.calls = calls;
 	}
+	@Override
+	public String toString() {
+		return "APIKey [key=" + key + ", role=" + role + ", calls=" + calls + "]";
+	}
+	
+	
 	
 	
 	

@@ -1,17 +1,13 @@
 package com.amazon;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import com.amazon.dao.BookDAOCache;
-import com.amazon.pojo.Book;
-
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-    
-    @RequestMapping("/")
-    public String index() {
-        return "Hello";
-    }  
+
+	@RequestMapping("/")
+	public String index() {
+		return "Hello";
+	}
 }
