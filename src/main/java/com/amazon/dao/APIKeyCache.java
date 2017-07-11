@@ -3,6 +3,7 @@ package com.amazon.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import com.amazon.keys.APIKey;
@@ -13,8 +14,12 @@ public class APIKeyCache implements APIKeyDAO {
 	private static APIKeyCache instance;
 
 	private List<APIKey> keys = new ArrayList<APIKey>();
+	private Map<String, Integer> maxCalls = new HashMap<>();
 
 	private APIKeyCache() {
+		
+		maxCalls.put("/book", 10);
+		maxCalls.put("/", 50);
 	}
 
 	public static APIKeyCache getInstance() {
@@ -52,12 +57,12 @@ public class APIKeyCache implements APIKeyDAO {
 
 	@Override
 	public boolean isAuthorized(Role target, APIKey key) {
-		
-		if(key.getRole() == Role.ADMIN){
+
+		if (key.getRole() == Role.ADMIN) {
 			return true;
-		}else if(key.getRole() == Role.CLIENT && (target == Role.CLIENT || target == Role.VISITOR)){
+		} else if (key.getRole() == Role.CLIENT && (target == Role.CLIENT || target == Role.VISITOR)) {
 			return true;
-		}else if(key.getRole() == Role.VISITOR && target == Role.VISITOR){
+		} else if (key.getRole() == Role.VISITOR && target == Role.VISITOR) {
 			return true;
 		}
 
@@ -66,13 +71,28 @@ public class APIKeyCache implements APIKeyDAO {
 
 	@Override
 	public boolean reachedLimit(String endpoint, APIKey key) {
-		// TODO Auto-generated method stub
+		
+		if(key.getCalls().get(endpoint) != null &&
+				key.getCalls().get(endpoint) > this.maxCalls.get(endpoint)){
+			return true;
+		}
+
 		return false;
 	}
 
 	@Override
-	public void deleteKey(APIKey key) {
-		// TODO Auto-generated method stub
+	public void deleteKey(String key) {
+		int i = 0;
+		boolean found = false;
+		for (i = 0; i < this.keys.size(); i++) {
+			if (this.keys.get(i).getKey().compareTo(key) == 0) {
+				break;
+			}
+		}
+
+		if (found) {
+			this.keys.remove(i);
+		}
 
 	}
 

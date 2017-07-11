@@ -60,4 +60,14 @@ public class APIKeyDAOTest {
 		assertFalse(akc.isAuthorized(Role.CLIENT, k));
 		assertTrue(akc.isAuthorized(Role.VISITOR, k));
 	}
+	
+	@Test
+	public void testReachedLimit(){
+		APIKeyCache akc = APIKeyCache.getInstance();
+		APIKey k = akc.getNewKey();
+		
+		assertFalse(akc.reachedLimit("/", k));
+		k.getCalls().put("/", 60);
+		assertTrue(akc.reachedLimit("/", k));
+	}
 }
