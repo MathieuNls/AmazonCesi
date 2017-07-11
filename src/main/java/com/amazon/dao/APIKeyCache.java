@@ -17,7 +17,7 @@ public class APIKeyCache implements APIKeyDAO {
 	private Map<String, Integer> maxCalls = new HashMap<>();
 
 	private APIKeyCache() {
-		
+
 		maxCalls.put("/book", 10);
 		maxCalls.put("/", 50);
 	}
@@ -38,7 +38,7 @@ public class APIKeyCache implements APIKeyDAO {
 
 		Random r = new Random(System.currentTimeMillis() + new Random().nextLong());
 
-		char[] charPossible = "abcdefghijklmnopqrstuvwxyz0123456789-/*$#%".toCharArray();
+		char[] charPossible = "abcdefghijklmnopqrstuvwxyz0123456789-/*$".toCharArray();
 		String key = "";
 		for (int i = 0; i < 50 + r.nextInt(30); i++) {
 
@@ -52,28 +52,45 @@ public class APIKeyCache implements APIKeyDAO {
 		}
 
 		APIKey k = new APIKey(key, Role.CLIENT, new HashMap<>());
+		this.keys.add(k);
 		return k;
 	}
 
 	@Override
-	public boolean isAuthorized(Role target, APIKey key) {
+	public boolean isAuthorized(Role target, String key) {
 
-		if (key.getRole() == Role.ADMIN) {
+		APIKey k = this.findKey(key);
+
+		if (k == null) {
+			return false;
+		} else if (k.getRole() == Role.ADMIN) {
 			return true;
-		} else if (key.getRole() == Role.CLIENT && (target == Role.CLIENT || target == Role.VISITOR)) {
+		} else if (k.getRole() == Role.CLIENT && (target == Role.CLIENT || target == Role.VISITOR)) {
 			return true;
-		} else if (key.getRole() == Role.VISITOR && target == Role.VISITOR) {
+		} else if (k.getRole() == Role.VISITOR && target == Role.VISITOR) {
 			return true;
 		}
 
 		return false;
 	}
 
+	public void callSuccess(String endpoint, String key) {
+		APIKey k = this.findKey(key);
+		int previousCalls = 0;
+
+		if (k.getCalls().containsKey(endpoint)) {
+			previousCalls = k.getCalls().get(endpoint);
+		}
+
+		k.getCalls().put(endpoint, previousCalls + 1);
+	}
+
 	@Override
-	public boolean reachedLimit(String endpoint, APIKey key) {
+	public boolean reachedLimit(String endpoint, String key) {
 		
-		if(key.getCalls().get(endpoint) != null &&
-				key.getCalls().get(endpoint) > this.maxCalls.get(endpoint)){
+		APIKey k = this.findKey(key);
+		
+		if (k.getCalls().get(endpoint) != null && k.getCalls().get(endpoint) > this.maxCalls.get(endpoint)) {
 			return true;
 		}
 
@@ -96,4 +113,15 @@ public class APIKeyCache implements APIKeyDAO {
 
 	}
 
+	private APIKey findKey(String key) {
+		APIKey k = null;
+
+		for (APIKey apiKey : this.keys) {
+			if (apiKey.getKey().compareTo(key) == 0) {
+				k = apiKey;
+				break;
+			}
+		}
+		return k;
+	}
 }

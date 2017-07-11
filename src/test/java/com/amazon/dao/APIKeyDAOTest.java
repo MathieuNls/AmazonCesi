@@ -20,7 +20,7 @@ public class APIKeyDAOTest {
 		boolean isBetween50And80 = k.getKey().length() >= 50 && k.getKey().length() <= 80;
 		assertTrue(isBetween50And80);
 
-		char[] charPossible = "abcdefghijklmnopqrstuvwxyz0123456789-/*$#%".toCharArray();
+		char[] charPossible = "abcdefghijklmnopqrstuvwxyz0123456789-/*$".toCharArray();
 
 		for (int i = 0; i < k.getKey().length(); i++) {
 			boolean found = false;
@@ -44,30 +44,30 @@ public class APIKeyDAOTest {
 	public void testIsAuthorized() {
 		APIKeyCache akc = APIKeyCache.getInstance();
 		APIKey k = akc.getNewKey();
-
+		
 		k.setRole(Role.ADMIN);
-		assertTrue(akc.isAuthorized(Role.ADMIN, k));
-		assertTrue(akc.isAuthorized(Role.CLIENT, k));
-		assertTrue(akc.isAuthorized(Role.VISITOR, k));
+		assertTrue(akc.isAuthorized(Role.ADMIN, k.getKey()));
+		assertTrue(akc.isAuthorized(Role.CLIENT, k.getKey()));
+		assertTrue(akc.isAuthorized(Role.VISITOR, k.getKey()));
 
 		k.setRole(Role.CLIENT);
-		assertFalse(akc.isAuthorized(Role.ADMIN, k));
-		assertTrue(akc.isAuthorized(Role.CLIENT, k));
-		assertTrue(akc.isAuthorized(Role.VISITOR, k));
+		assertFalse(akc.isAuthorized(Role.ADMIN, k.getKey()));
+		assertTrue(akc.isAuthorized(Role.CLIENT,k.getKey()));
+		assertTrue(akc.isAuthorized(Role.VISITOR, k.getKey()));
 
 		k.setRole(Role.VISITOR);
-		assertFalse(akc.isAuthorized(Role.ADMIN, k));
-		assertFalse(akc.isAuthorized(Role.CLIENT, k));
-		assertTrue(akc.isAuthorized(Role.VISITOR, k));
+		assertFalse(akc.isAuthorized(Role.ADMIN, k.getKey()));
+		assertFalse(akc.isAuthorized(Role.CLIENT, k.getKey()));
+		assertTrue(akc.isAuthorized(Role.VISITOR, k.getKey()));
 	}
-	
+
 	@Test
-	public void testReachedLimit(){
+	public void testReachedLimit() {
 		APIKeyCache akc = APIKeyCache.getInstance();
 		APIKey k = akc.getNewKey();
-		
-		assertFalse(akc.reachedLimit("/", k));
+
+		assertFalse(akc.reachedLimit("/", k.getKey()));
 		k.getCalls().put("/", 60);
-		assertTrue(akc.reachedLimit("/", k));
+		assertTrue(akc.reachedLimit("/", k.getKey()));
 	}
 }

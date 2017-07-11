@@ -28,7 +28,7 @@ public class BookDAOCache implements BookDAO {
 	public Book getBookByISBN10(String isbn10) {
 
 		for (Book b : books) {
-			if (b.getISBN10() == isbn10) {
+			if (b.getISBN10().compareToIgnoreCase(isbn10) == 0) {
 				return b;
 			}
 		}
@@ -38,7 +38,7 @@ public class BookDAOCache implements BookDAO {
 	@Override
 	public Book getBookByISBN13(String isbn13) {
 		for (Book b : books) {
-			if (b.getISBN13() == isbn13) {
+			if (b.getISBN13().compareToIgnoreCase(isbn13) == 0) {
 				return b;
 			}
 		}

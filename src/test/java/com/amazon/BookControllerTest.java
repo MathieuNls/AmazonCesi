@@ -14,7 +14,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.amazon.dao.APIKeyCache;
 import com.amazon.dao.BookDAOCache;
+import com.amazon.keys.APIKey;
 import com.amazon.pojo.Book;
 
 @RunWith(SpringRunner.class)
@@ -25,12 +27,13 @@ public class BookControllerTest {
     private MockMvc mvc;
 
     @Test
-    public void getHello() throws Exception {
+    public void getBook() throws Exception {
     	
+    	APIKey k = APIKeyCache.getInstance().getNewKey();
     	Book b = new Book("ISBN15", "ISBN16", 200, "Un Titre", "Resumé", "Author", "editor", "src/image.pmg");
     	BookDAOCache.getInstance().saveBook(b);
     	
-        mvc.perform(MockMvcRequestBuilders.get("/book").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.get("/book?key="+k.getKey()+"&isbn10=ISBN15").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().string(equalTo(b.toString())));
     	
