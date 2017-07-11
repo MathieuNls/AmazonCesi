@@ -12,7 +12,7 @@ public class BookController {
 	@RequestMapping("/book")
 	public String book(){
 		
-		return BookDAOCache.getInstance().getBookByISBN10("ISBN10").toString();
+		return BookDAOCache.getInstance().getBookByISBN10("ISBN15").toString();
 	}
 	
 	
