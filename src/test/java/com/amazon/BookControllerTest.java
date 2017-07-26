@@ -33,7 +33,7 @@ public class BookControllerTest {
     	Book b = new Book("ISBN15", "ISBN16", 200, "Un Titre", "Resumé", "Author", "editor", "src/image.pmg");
     	BookDAOCache.getInstance().saveBook(b);
     	
-        mvc.perform(MockMvcRequestBuilders.get("/book?key="+k.getKey()+"&isbn10=ISBN15").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.get("/book?key="+k.getStringKey()+"&isbn10=ISBN15").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().string(equalTo(b.toString())));
     	

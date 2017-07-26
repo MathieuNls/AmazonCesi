@@ -47,8 +47,11 @@ public class BookDAOCache implements BookDAO {
 
 	@Override
 	public void saveBook(Book book) {
+		
+		if(!this.books.contains(book)){
 
-		this.books.add(book);
+			this.books.add(book);
+		}
 	}
 
 	@Override

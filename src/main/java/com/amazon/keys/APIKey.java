@@ -14,7 +14,7 @@ public class APIKey {
 		this.role = role;
 		this.calls = calls;
 	}
-	public String getKey() {
+	public String getStringKey() {
 		return key;
 	}
 	public void setKey(String key) {
@@ -36,10 +36,4 @@ public class APIKey {
 	public String toString() {
 		return "APIKey [key=" + key + ", role=" + role + ", calls=" + calls + "]";
 	}
-	
-	
-	
-	
-	
-
 }

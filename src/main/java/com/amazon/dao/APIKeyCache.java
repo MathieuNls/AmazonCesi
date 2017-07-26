@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import com.amazon.keys.APIKey;
@@ -46,7 +47,7 @@ public class APIKeyCache implements APIKeyDAO {
 		}
 
 		for (APIKey k : this.keys) {
-			if (k.getKey().compareTo(key) == 0) {
+			if (k.getStringKey().compareTo(key) == 0) {
 				return this.getNewKey();
 			}
 		}
@@ -87,9 +88,9 @@ public class APIKeyCache implements APIKeyDAO {
 
 	@Override
 	public boolean reachedLimit(String endpoint, String key) {
-		
+
 		APIKey k = this.findKey(key);
-		
+
 		if (k.getCalls().get(endpoint) != null && k.getCalls().get(endpoint) > this.maxCalls.get(endpoint)) {
 			return true;
 		}
@@ -102,7 +103,7 @@ public class APIKeyCache implements APIKeyDAO {
 		int i = 0;
 		boolean found = false;
 		for (i = 0; i < this.keys.size(); i++) {
-			if (this.keys.get(i).getKey().compareTo(key) == 0) {
+			if (this.keys.get(i).getStringKey().compareTo(key) == 0) {
 				break;
 			}
 		}
@@ -117,11 +118,43 @@ public class APIKeyCache implements APIKeyDAO {
 		APIKey k = null;
 
 		for (APIKey apiKey : this.keys) {
-			if (apiKey.getKey().compareTo(key) == 0) {
+			if (apiKey.getStringKey().compareTo(key) == 0) {
 				k = apiKey;
 				break;
 			}
 		}
 		return k;
+	}
+
+	@Override
+	public APIKey getKeyByString(String key) {
+
+		for (APIKey apiKey : keys) {
+			if (apiKey.getStringKey().compareTo(key) == 0) {
+				return apiKey;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Map<String, Integer> getCalls() {
+
+		Map<String, Integer> calls = new HashMap<>();
+
+		for (APIKey apiKey : this.keys) {
+			
+			for (Entry<String, Integer> entry : apiKey.getCalls().entrySet()) {
+				
+				int before = 0;
+				if (calls.containsKey(entry.getKey())) {
+					before = calls.get(entry.getKey());
+				}
+				calls.put(entry.getKey(), entry.getValue() + before);
+			}
+
+		}
+
+		return calls;
 	}
 }

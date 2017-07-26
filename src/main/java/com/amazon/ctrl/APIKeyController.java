@@ -19,7 +19,7 @@ public class APIKeyController {
 	@RequestMapping("/keys/create")
 	public String getKey() {
 		APIKeyCache akc = APIKeyCache.getInstance();
-		return akc.getNewKey().getKey();
+		return akc.getNewKey().getStringKey();
 	}
 
 	/**
