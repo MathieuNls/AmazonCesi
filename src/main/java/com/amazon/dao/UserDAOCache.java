@@ -5,18 +5,19 @@ import java.util.List;
 
 import com.amazon.pojo.User;
 
+
 public class UserDAOCache implements UserDAO {
 
 	private static UserDAOCache instance;
 	private List<User> users = new ArrayList<>();
 
-	private UserDAOCache() {
+	private UserDAOCache() { 
 	}
 
 	public static UserDAOCache getInstance() {
 
 		if (instance == null) {
-			synchronized (UserDAOCacheTest.class) {
+			synchronized (UserDAOCache.class) { 
 				if (instance == null) {
 					instance = new UserDAOCache();
 				}

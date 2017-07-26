@@ -107,7 +107,7 @@ public class APIKeyDAOTest {
 		APIKey k = akc.getNewKey();
 
 		assertFalse(akc.reachedLimit("/", k.getStringKey()));
-		k.getCalls().put("/", 60);
+		//k.getCalls().put("/", 60);
 		assertTrue(akc.reachedLimit("/", k.getStringKey()));
 	}
 }

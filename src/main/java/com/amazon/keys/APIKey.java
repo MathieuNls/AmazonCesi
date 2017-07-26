@@ -1,14 +1,15 @@
 package com.amazon.keys;
 
+import java.util.List;
 import java.util.Map;
 
 public class APIKey {
 	
 	private String key;
 	private Role role;
-	private Map<String, Integer> calls;
+	private Map<String, List<Long>> calls;
 	
-	public APIKey(String key, Role role, Map<String, Integer> calls) {
+	public APIKey(String key, Role role, Map<String, List<Long>> calls) {
 		super();
 		this.key = key;
 		this.role = role;
@@ -26,10 +27,10 @@ public class APIKey {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	public Map<String, Integer> getCalls() {
+	public Map<String, List<Long>> getCalls() {
 		return calls;
 	}
-	public void setCalls(Map<String, Integer> calls) {
+	public void setCalls(Map<String, List<Long>> calls) {
 		this.calls = calls;
 	}
 	@Override

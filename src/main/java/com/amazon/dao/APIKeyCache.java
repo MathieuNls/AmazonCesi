@@ -77,21 +77,34 @@ public class APIKeyCache implements APIKeyDAO {
 
 	public void callSuccess(String endpoint, String key) {
 		APIKey k = this.findKey(key);
-		int previousCalls = 0;
+		List<Long> previousCalls = new ArrayList<Long>();
 
 		if (k.getCalls().containsKey(endpoint)) {
 			previousCalls = k.getCalls().get(endpoint);
 		}
+		
+		previousCalls.add(System.currentTimeMillis());
 
-		k.getCalls().put(endpoint, previousCalls + 1);
+		k.getCalls().put(endpoint, previousCalls);
 	}
 
 	@Override
 	public boolean reachedLimit(String endpoint, String key) {
 
 		APIKey k = this.findKey(key);
+		
+		List<Long> calls = k.getCalls().get(key);
+		
+		long currentTime = System.currentTimeMillis();
+		int totalCalls = 0;
+		
+		for (Long timestamp : calls) {
+			if(currentTime-timestamp < 60*1000){
+				totalCalls++;
+			}
+		}
 
-		if (k.getCalls().get(endpoint) != null && k.getCalls().get(endpoint) > this.maxCalls.get(endpoint)) {
+		if (k.getCalls().get(endpoint) != null && totalCalls > this.maxCalls.get(endpoint)) {
 			return true;
 		}
 
@@ -144,13 +157,13 @@ public class APIKeyCache implements APIKeyDAO {
 
 		for (APIKey apiKey : this.keys) {
 			
-			for (Entry<String, Integer> entry : apiKey.getCalls().entrySet()) {
+			for (Entry<String, List<Long>> entry : apiKey.getCalls().entrySet()) {
 				
 				int before = 0;
 				if (calls.containsKey(entry.getKey())) {
 					before = calls.get(entry.getKey());
 				}
-				calls.put(entry.getKey(), entry.getValue() + before);
+				calls.put(entry.getKey(), entry.getValue().size() + before);
 			}
 
 		}
